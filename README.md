@@ -1,3 +1,6 @@
+## 🔗 Live Dashboard
+👉 [Klik di sini untuk melihat Dashboard](https://bike-sharing-dashboard-proyek-bangkit.streamlit.app/)
+
 # 🚲 Bike Sharing Dashboard
 
 ## 📋 Deskripsi Proyek
