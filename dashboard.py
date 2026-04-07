@@ -3,6 +3,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 
+# Load & Bersihkan CSV otomatis
+with open("Bike_sharing_dataset.csv", "r") as f:
+    lines = f.readlines()
+
+clean_lines = []
+for line in lines:
+    if line.startswith('<<<<<<<') or line.startswith('=======') or line.startswith('>>>>>>>'):
+        continue
+    if 'dteday' in line and 'instant' in line and clean_lines:
+        continue
+    clean_lines.append(line)
+
+with open("Bike_sharing_dataset.csv", "w") as f:
+    f.writelines(clean_lines)
+
+# Load dataframe
 df = pd.read_csv("Bike_sharing_dataset.csv")
 df.columns = df.columns.str.strip()
 df = df.drop_duplicates(subset=['dteday'], keep='first')
@@ -11,9 +27,11 @@ df['season_label'] = df['season'].map({
     1: 'Springer', 2: 'Summer', 3: 'Fall', 4: 'Winter'
 })
 
+# Header
 st.title('Dashboard Bike Sharing Dataset')
-st.metric("Total sewa", value=df['cnt'].sum())
+st.metric("Total sewa", value=int(df['cnt'].sum()))
 
+# Chart 1
 st.subheader('Bar Chart jumlah penyewaan sepeda berdasarkan musim')
 season_counts = df.groupby('season_label')['cnt'].sum().reindex(
     ['Springer', 'Summer', 'Fall', 'Winter']
@@ -26,6 +44,7 @@ plt.tight_layout()
 st.pyplot(fig1)
 plt.close(fig1)
 
+# Chart 2
 st.subheader('Pola Data berdasarkan jenis pelanggan')
 fig2, ax2 = plt.subplots(figsize=(12, 5))
 ax2.plot(df['dteday'], df['casual'], label='casual', color='red')
@@ -37,6 +56,7 @@ plt.tight_layout()
 st.pyplot(fig2)
 plt.close(fig2)
 
+# Chart 3
 st.subheader('Korelasi Spearman antar variabel')
 corr = df[['temp','hum','windspeed','cnt']].corr(method='spearman')
 fig3, ax3 = plt.subplots()
